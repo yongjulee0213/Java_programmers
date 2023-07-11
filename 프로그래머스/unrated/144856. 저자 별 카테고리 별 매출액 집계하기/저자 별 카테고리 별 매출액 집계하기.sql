@@ -1,0 +1,17 @@
+SELECT D.AUTHOR_ID, C.AUTHOR_NAME, D.CATEGORY, D.TOTAL_SALES
+FROM AUTHOR C
+INNER JOIN
+            (
+            SELECT A.CATEGORY, A.AUTHOR_ID, SUM(A.PRICE*B.SALES) AS TOTAL_SALES
+            FROM BOOK A
+            INNER JOIN (
+                        SELECT BOOK_ID, SALES
+                        FROM BOOK_SALES
+                        WHERE EXTRACT(YEAR FROM SALES_DATE)=2022
+                        AND EXTRACT(MONTH FROM SALES_DATE)=1
+                        ) B
+            ON A.BOOK_ID=B.BOOK_ID
+            GROUP BY A.CATEGORY, A.AUTHOR_ID
+            ) D
+ON C.AUTHOR_ID=D.AUTHOR_ID
+ORDER BY C.AUTHOR_ID, D.CATEGORY DESC
